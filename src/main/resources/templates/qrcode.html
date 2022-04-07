@@ -11,7 +11,7 @@
     <p>Please scan the qr code and enter the code from Google Authenticator</p>
     <form action="#" th:action="@{/mfa/qrcode}" method="post">
         <input type="text" name="code" placeholder="code"/>
-        <input type="submit" />
+        <input type="submit" value="submit"/>
     </form> 
     <p th:text="${error}"></p>
 </body>
