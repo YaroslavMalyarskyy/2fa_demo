@@ -11,9 +11,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * User
- */
 @Entity
 @Getter
 @Setter
@@ -34,7 +31,7 @@ public class User {
 
     @Setter(AccessLevel.NONE)
     @Column(name = "is_mfa_enabled", length = 72, nullable = false)
-    private boolean isMfaEnabled = true; // flag to indicate of mfa is active for profile is always true
+    private boolean isMfaEnabled = false; // flag to indicate of mfa is active for profile is always true
 
     @Column(name = "secret", length = 72, nullable = false)
     private String secret; // secret store for the profile, this will be used during the login process.

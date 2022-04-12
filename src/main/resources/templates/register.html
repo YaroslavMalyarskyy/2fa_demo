@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2FA Demo</title>
 </head>
+
 <body>
     <h2>Registration</h2>
     <form action="#" th:action="@{/}" th:object="${user}" method="post">
-        <input type="email" th:field="*{email}" placeholder="email"/>
-        <input type="password" th:field="*{password}" placeholder="password"/>
-        <input type="submit" value="submit"/>
-    </form> 
+        <input type="email" th:field="*{email}" placeholder="email" />
+        <input type="password" th:field="*{password}" placeholder="password" />
+        <input type="submit" value="submit" />
+    </form>
     <p th:text="${error}"></p>
+    <img src="">
 </body>
+
 </html>

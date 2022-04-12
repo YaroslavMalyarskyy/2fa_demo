@@ -8,11 +8,7 @@
 </head>
 <body>
     <img th:src="${qrCode}" />
-    <p>Please scan the qr code and enter the code from Google Authenticator</p>
-    <form action="#" th:action="@{/mfa/qrcode}" method="post">
-        <input type="text" name="code" placeholder="code"/>
-        <input type="submit" value="submit"/>
-    </form> 
-    <p th:text="${error}"></p>
+    <p>Please scan the qr code with from Google Authenticator</p>
+    <a href="/login">Log In</a>
 </body>
 </html>

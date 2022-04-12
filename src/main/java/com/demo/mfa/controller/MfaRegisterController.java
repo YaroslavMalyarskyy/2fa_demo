@@ -10,8 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import dev.samstevens.totp.code.CodeVerifier;
 import dev.samstevens.totp.exceptions.QrGenerationException;
@@ -26,9 +28,6 @@ import dev.samstevens.totp.util.Utils;
 @Controller
 public class MfaRegisterController {
 
-    private User user;
-    private String qrCodeImage;
-
     @Autowired
     private UserService userService;
 
@@ -38,20 +37,16 @@ public class MfaRegisterController {
     @Autowired
     private QrGenerator qrGenerator;
 
-    @Autowired
-    private CodeVerifier codeVerifie;
-
     @GetMapping("/")
-    public String register(Model model) throws QrGenerationException {
+    public String register(Model model) {
 
         model.addAttribute("user", new UserDto());
         return "register";
     }
 
     @PostMapping("/")
-    public String registerUser(final UserDto userDto, final BindingResult bindingResult, final Model model)
-            throws QrGenerationException {
-
+    public String registerUser(final UserDto userDto, final BindingResult bindingResult, final Model model,final RedirectAttributes redirectAttributes) {
+        User user;
         try {
             user = userService.registerNewUser(userDto);
         } catch (UserAlreadyExistException uaeEx) {
@@ -60,33 +55,18 @@ public class MfaRegisterController {
             return "register";
         }
 
+        redirectAttributes.addFlashAttribute("user", user);
         return "redirect:/mfa/qrcode";
     }
 
     @GetMapping("/mfa/qrcode")
-    public String confirmRegister(Model model) throws QrGenerationException {
-
-        // Generate the QR code image data as a base64 string which
-        // can be used in an <img> tag:
-        qrCodeImage = Utils.getDataUriForImage(qrGenerator.generate(getQrData(user)),
+    public String confirmRegister(@ModelAttribute("user") User user, Model model,final RedirectAttributes redirectAttributes) throws QrGenerationException {
+        String qrCodeImage = Utils.getDataUriForImage(qrGenerator.generate(getQrData(user)),
                 qrGenerator.getImageMimeType());
 
+                
         model.addAttribute("qrCode", qrCodeImage);
         model.addAttribute("code", new String());
-        return "qrcode";
-    }
-
-    @PostMapping("/mfa/qrcode")
-    public String confirmRegister(@RequestParam String code, final Model model) {
-
-        if (codeVerifie.isValidCode(user.getSecret(), code.replaceAll(" ", ""))) {
-            return "redirect:/login";
-        }
-
-        model.addAttribute("qrCode", qrCodeImage);
-        model.addAttribute("code", new String());
-        model.addAttribute("error", "INCORRECT CODE");
-
         return "qrcode";
     }
 
